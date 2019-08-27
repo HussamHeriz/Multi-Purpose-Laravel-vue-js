@@ -22,3 +22,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 /* Laravel Vue Routes */
 Route::get('/dashboard', 'HomeController@index')->name('dashboard');
 Route::get('/profile', 'HomeController@index')->name('profile');
+Route::get('/users', 'HomeController@index')->name('users');

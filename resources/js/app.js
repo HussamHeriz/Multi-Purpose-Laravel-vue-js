@@ -7,6 +7,12 @@
 require('./bootstrap');
 
 /**
+ * vForm Validation
+ */
+require('./forms/vform');
+
+
+/**
  * Load all the custom scripts for vue js
  * in Laravel Application
  */
