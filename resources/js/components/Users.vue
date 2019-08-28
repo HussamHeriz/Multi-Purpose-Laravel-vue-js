@@ -28,11 +28,13 @@
                       <td>{{user.id}}</td>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
-                      <td>{{user.type}}</td>
-                      <td>{{user.created_at}}</td>
+                      <td>{{user.type | upFirstLetter}}</td>
+                      <td>{{user.created_at | myDate}}</td>
                       <td>
                           <a href="#"><i class="fas fa-edit"></i></a> |
-                          <a href="#"><i class="fas fa-trash red"></i></a>
+                            <a href="#" @click="deleteUser(user.id)">
+                              <i class="fas fa-trash red"></i>
+                            </a>
                       </td>
                     </tr>
                   </tbody>
@@ -109,6 +111,7 @@
 </template>
 
 <script>
+import { setInterval } from 'timers';
     export default {
         name: 'users',
         data() {
@@ -129,11 +132,50 @@
                 axios.get('api/user').then( ({data}) => (this.users = data.data) );
             },
             createUser: function() {
-                this.form.post('api/user');
+                this.$Progress.start();
+
+                this.form.post('api/user')
+                .then(() => {
+                    $('#addUser').modal('hide');
+                    toast.fire({
+                        type: 'success',
+                        title: 'User Created Successfully'
+                    });
+                    Fire.$emit('reload-users');
+                });
+
+                this.$Progress.finish();
+            },
+            deleteUser: function(user_id) {
+                swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+
+                        axios.delete('api/user/'+user_id)
+                        .then( ({data}) => {
+                            swal.fire(
+                                'Deleted!',
+                                'User has been deleted.',
+                                'success'
+                            );
+
+                            Fire.$emit('reload-users');
+                        });
+
+                    }
+                });
             }
         },
         created() {
             this.loadUsers();
+            Fire.$on('reload-users',() => this.loadUsers());
         }
     }
 </script>

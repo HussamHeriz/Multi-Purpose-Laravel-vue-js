@@ -11,6 +11,20 @@ require('./bootstrap');
  */
 require('./forms/vform');
 
+/**
+ * Vue ProgressBar
+ */
+require('./progress');
+
+/**
+ * Sweet Alert Plugin
+ */
+require('./swal');
+
+/**
+ * Custom Vue Instance for Handling Events
+ */
+window.Fire = new Vue();
 
 /**
  * Load all the custom scripts for vue js
