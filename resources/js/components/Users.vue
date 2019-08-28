@@ -7,7 +7,7 @@
                 <h3 class="card-title">Users Management</h3>
 
                 <div class="card-tools">
-                    <button class="btn btn-success" data-toggle="modal" data-target="#addUser">Add User <i class="fas fa-user-plus"></i></button>
+                    <button class="btn btn-success" @click="showAddModal">Add User <i class="fas fa-user-plus"></i></button>
                 </div>
               </div>
               <!-- /.card-header -->
@@ -31,7 +31,7 @@
                       <td>{{user.type | upFirstLetter}}</td>
                       <td>{{user.created_at | myDate}}</td>
                       <td>
-                          <a href="#"><i class="fas fa-edit"></i></a> |
+                          <a href="#" @click="showEditModal(user)"><i class="fas fa-edit"></i></a> |
                             <a href="#" @click="deleteUser(user.id)">
                               <i class="fas fa-trash red"></i>
                             </a>
@@ -51,9 +51,10 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
 
-            <form @submit.prevent="createUser">
+            <form @submit.prevent="editmode ? updateUser() : createUser()">
             <div class="modal-header">
-                <h5 class="modal-title" id="addUserLabel">Add New User</h5>
+                <h5 v-show="!editmode" class="modal-title" id="addUserLabel">Add New User</h5>
+                <h5 v-show="editmode" class="modal-title" id="addUserLabel">Update user's info</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -100,7 +101,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button v-show="editmode" type="submit" class="btn btn-success">Update</button>
+                <button v-show="!editmode" type="submit" class="btn btn-primary">Create</button>
             </div>
 
             </form>
@@ -111,13 +113,14 @@
 </template>
 
 <script>
-import { setInterval } from 'timers';
     export default {
         name: 'users',
         data() {
             return {
                 users: [],
+                editmode: false,
                 form: new Form({
+                    id: '',
                     name: '',
                     email: '',
                     password: '',
@@ -142,6 +145,26 @@ import { setInterval } from 'timers';
                         title: 'User Created Successfully'
                     });
                     Fire.$emit('reload-users');
+                });
+
+                this.$Progress.finish();
+            },
+            updateUser(){
+                this.$Progress.start();
+
+                this.form.put('api/user/'+this.form.id)
+                .then(() => {
+                    $('#addUser').modal('hide');
+                    swal.fire(
+                        'Updated!',
+                        'User has been updated successfully.',
+                        'success'
+                    );
+                    Fire.$emit('reload-users');
+                    this.$Progress.finish();
+                })
+                .catch(() => {
+                    this.$Progress.fail();
                 });
 
                 this.$Progress.finish();
@@ -171,7 +194,18 @@ import { setInterval } from 'timers';
 
                     }
                 });
-            }
+            },
+            showAddModal: function() {
+                this.form.reset();
+                this.editmode = false;
+                $('#addUser').modal('show');
+            },
+            showEditModal: function(user) {
+                this.form.clear();
+                this.editmode = true;
+                $('#addUser').modal('show');
+                this.form.fill(user);
+            },
         },
         created() {
             this.loadUsers();

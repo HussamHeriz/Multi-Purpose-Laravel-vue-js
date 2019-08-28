@@ -10,6 +10,16 @@ use App\User;
 class UserController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -63,7 +73,18 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $this->validate($request,[
+            'name'      => 'required|string|max:191',
+            'email'     => 'required|string|email|max:191|unique:users,email,'.$id,
+            'password'  => 'sometimes|min:6',
+            'type'      => 'required|string|in:admin,author,user'
+        ]);
+
+        $user->update($request->all());
+
+        return ['message' => 'user updated successfully'];
     }
 
     /**

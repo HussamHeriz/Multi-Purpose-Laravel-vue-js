@@ -27,6 +27,11 @@ require('./swal');
 window.Fire = new Vue();
 
 /**
+ * Passport Vue Components
+ */
+require('./passport');
+
+/**
  * Load all the custom scripts for vue js
  * in Laravel Application
  */
