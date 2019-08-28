@@ -58,7 +58,7 @@
                             </div>
 
                         <div class="tab-pane" id="settings">
-                            <form class="form-horizontal">
+                            <form @submit.prevent="updateProfile" class="form-horizontal">
                             <div class="form-group">
                                 <label for="inputName" class="col-sm-2 control-label">Name</label>
 
@@ -75,10 +75,10 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="inputExperience" class="col-sm-2 control-label">Experience</label>
+                                <label for="inputBio" class="col-sm-2 control-label">Bio</label>
 
                                 <div class="col-sm-10">
-                                <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
+                                <textarea class="form-control" v-model="form.bio" id="inputBio" placeholder="Write about yourself"></textarea>
                                 </div>
                             </div>
 
@@ -86,15 +86,15 @@
                                 <label for="profilePhoto" class="col-sm-2 control-label">Profile Photo</label>
 
                                 <div class="col-sm-10">
-                                    <input type="file" class="form-control" id="profilePhoto">
+                                    <input type="file" @change="updateImage" class="form-control" id="profilePhoto">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="inputPassport" class="col-sm-12 control-label">Passport (Leave empty if not changing)</label>
+                                <label for="inputPassword" class="col-sm-12 control-label">Password (Leave empty if not changing)</label>
 
                                 <div class="col-sm-10">
-                                <input type="text" class="form-control" id="inputPassport" placeholder="Passport">
+                                <input type="password" v-model="form.password" class="form-control" id="inputPassword" placeholder="Password">
                                 </div>
                             </div>
 
@@ -141,6 +141,37 @@
                     bio: '',
                     photo: ''
                 })
+            }
+        },
+        methods: {
+            updateImage: function(e) {
+                let file = e.target.files[0];
+
+                if(file.size < 2*1024*1024) { // 2MB
+                    let reader = new FileReader();
+                    reader.onloadend = (file) => {
+                        this.form.photo = reader.result;
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    swal.fire(
+                        'Error!',
+                        'File size is bigger than 2MB',
+                        'error'
+                    );
+                }
+
+            },
+            updateProfile: function() {
+                this.$Progress.start();
+                this.form.put('api/profile')
+                .then( ({data}) => {
+
+                    this.$Progress.finish();
+                })
+                .catch(() => {
+                    this.$Progress.fail();
+                });
             }
         },
         mounted() {
