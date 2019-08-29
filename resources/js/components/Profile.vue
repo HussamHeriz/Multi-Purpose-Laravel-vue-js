@@ -10,7 +10,7 @@
                     <h5 class="widget-user-desc">Web Designer</h5>
                 </div>
                 <div class="widget-user-image">
-                    <img class="img-circle" src="" alt="User Avatar">
+                    <img class="img-circle" :src="getProfileImage" alt="User Avatar" v-if="this.form.photo">
                 </div>
                 <div class="card-footer">
                     <div class="row">
@@ -83,10 +83,15 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="profilePhoto" class="col-sm-2 control-label">Profile Photo</label>
+                                <label for="profilePhoto" class="col-sm-12 control-label">Profile Photo</label>
 
-                                <div class="col-sm-10">
-                                    <input type="file" @change="updateImage" class="form-control" id="profilePhoto">
+                                <div class="row">
+                                    <div class="col-sm-8 center-items">
+                                        <input type="file" @change="updateImage" class="form-control" id="profilePhoto">
+                                    </div>
+                                    <div class="col-sm-2" v-if="this.form.photo">
+                                        <img class="img-circle img-fluid" :src="getProfileImage" alt="User Avatar" v-if="this.form.photo">
+                                    </div>
                                 </div>
                             </div>
 
@@ -125,6 +130,12 @@
 
 }
 
+.center-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 </style>
 
@@ -132,6 +143,7 @@
     export default {
         data() {
             return {
+                photoEdited: false,
                 form: new Form({
                     id: '',
                     name: '',
@@ -151,6 +163,7 @@
                     let reader = new FileReader();
                     reader.onloadend = (file) => {
                         this.form.photo = reader.result;
+                        this.photoEdited = true;
                     }
                     reader.readAsDataURL(file);
                 } else {
@@ -182,6 +195,13 @@
             .then(({data}) => {
                 this.form.fill(data);
             });
+        },
+        computed: {
+            getProfileImage: function() {
+                if(this.photoEdited)
+                    return this.form.photo;
+                return 'img/profile/'+this.form.photo;
+            }
         }
     }
 </script>
