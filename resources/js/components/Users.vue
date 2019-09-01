@@ -24,7 +24,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="user in users" :key="user.id">
+                    <tr v-for="user in users.data" :key="user.id">
                       <td>{{user.id}}</td>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
@@ -38,6 +38,9 @@
                       </td>
                     </tr>
                   </tbody>
+                  <tfoot class="mt-5">
+                    <pagination :data="users" :limit="2" :show-disabled="true" @pagination-change-page="getResults"></pagination>
+                  </tfoot>
                 </table>
               </div>
               <!-- /.card-body -->
@@ -117,7 +120,7 @@
         name: 'users',
         data() {
             return {
-                users: [],
+                users: {},
                 editmode: false,
                 form: new Form({
                     id: '',
@@ -132,7 +135,9 @@
         },
         methods: {
             loadUsers: function() {
-                axios.get('api/user').then( ({data}) => (this.users = data.data) );
+                axios.get('api/user').then( ({data}) => {
+                    this.users = data;
+                } );
             },
             createUser: function() {
                 this.$Progress.start();
@@ -205,6 +210,12 @@
                 this.editmode = true;
                 $('#addUser').modal('show');
                 this.form.fill(user);
+            },
+            getResults(page = 1) {
+                axios.get('api/user?page='+page)
+                .then( ({data}) => {
+                    this.users = data;
+                });
             },
         },
         created() {
