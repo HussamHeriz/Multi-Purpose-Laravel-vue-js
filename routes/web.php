@@ -24,3 +24,10 @@ Route::get('/dashboard', 'HomeController@index')->name('dashboard');
 Route::get('/profile', 'HomeController@index')->name('profile');
 Route::get('/developer', 'HomeController@index')->middleware('can:isAdmin')->name('developer');
 Route::get('/users', 'HomeController@index')->name('users');
+Route::get('/404', 'HomeController@index')->name('404');
+Route::get('/invoice', function(){
+    return view('invoice');
+})->name('invoice');
+Route::get('/{any}', function(){
+    return redirect()->route('404');
+})->name('not-found')->where('any', '.*');

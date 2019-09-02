@@ -12,6 +12,11 @@ require('./bootstrap');
 require('./forms/vform');
 
 /**
+ * Lodash Library
+ */
+window._ = require('lodash');
+
+/**
  * Vue ProgressBar
  */
 require('./progress');

@@ -221,6 +221,14 @@
         created() {
             this.loadUsers();
             Fire.$on('reload-users',() => this.loadUsers());
+
+            Fire.$on('search',() => {
+                let query = this.$parent.search;
+                axios.get('api/findUser?q='+query)
+                .then((response) => {
+                    this.users = response.data;
+                });
+            });
         }
     }
 </script>
