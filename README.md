@@ -27,7 +27,7 @@ It's just like any other Laravel project. Basically here is how you use it for y
 * Run ` php artisan migrate ` 
 * Done !!! Enjoy Customizing and building awesome app 
 
-#Screenshots
+## Screenshots
 ![Image1](https://serving.photos.photobox.com/0209172545161bfc73bc049484c11e8ecf3ff33baf3e78219f919e67ceb58949b984474a.jpg)
 ![Image2](https://serving.photos.photobox.com/77552903569a74beec952a63bf7df7b2f1624175d0bfae44962a680fa16d2d59191968f9.jpg)
 ![Image3](https://serving.photos.photobox.com/49043925d4b1d156e5a06fdd7422ce877bdbc336a6d50e51ca4edc72128fb185f6bce3bc.jpg)
